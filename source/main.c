@@ -75,8 +75,8 @@ int main()
 {
 	srvInit();	
 	aptInit();
-	hidInit(NULL);
-	gfxInit();
+	hidInit();
+	gfxInitDefault();
 
 	gfxSet3D(false);
 
@@ -104,7 +104,7 @@ int main()
 		hidScanInput();
 		if(hidKeysDown()&KEY_B)break;
 
-		gspWaitForEvent(GSPEVENT_VBlank0, false);
+		gspWaitForEvent(GSPGPU_EVENT_VBlank0, false);
 	}
 
 	gfxExit();
