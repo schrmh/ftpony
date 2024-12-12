@@ -13,6 +13,13 @@
 #include "ftp.h"
 #include "ftp_cmd.h"
 
+#define SOC_ALIGN       0x1000
+#define SOC_BUFFERSIZE  0x100000
+
+static u32 *SOC_buffer = NULL;
+
+void failExit(const char *fmt, ...);
+
 FS_Archive sdmcArchive;
 
 char tmpBuffer[512];
@@ -33,9 +40,22 @@ void ftp_init()
 	FSUSER_OpenArchive(NULL, &sdmcArchive);
 	print("FSUSER_OpenArchive %08X\n", (unsigned int)ret);
 
-	ret=SOC_Initialize((u32*)memalign(0x1000, 0x100000), 0x100000);
-	print("SOC_Initialize %08X\n", (unsigned int)ret);
+	// allocate buffer for SOC service
+	SOC_buffer = (u32*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
 
+	if(SOC_buffer == NULL) {
+		failExit("memalign: failed to allocate\n");
+	}
+
+	// Now intialise soc:u service
+	if ((ret = socInit(SOC_buffer, SOC_BUFFERSIZE)) != 0) {
+    	failExit("socInit: 0x%08X\n", (unsigned int)ret);
+	}
+
+	// register socShutdown to run at exit
+	// atexit functions execute in reverse order so this runs before gfxExit
+	atexit(socShutdown);
+	
 	sprintf(currentPath, "/");
 
 	currentIP=(u32)gethostid();

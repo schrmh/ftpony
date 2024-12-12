@@ -107,7 +107,6 @@ int main()
 		gspWaitForEvent(GSPEVENT_VBlank0, false);
 	}
 
-	socShutdown();
 	gfxExit();
 	hidExit();
 	aptExit();
