@@ -17,7 +17,9 @@ char* quotes[]={"\"wow this is the worst thing i've seen in a while\"\n",
 				"\"friendship is... something...\"\n",
 				"\"<mtheall> let's make it like really good code\"\n",
 				"\"//this code is not meant to be readable\"\n",
-				"\"// i just found it like this\"\n"};
+				"\"// i just found it like this\"\n",
+				"\"// I love this spending hours at fixing unecessary library breakages. 11/10 Arbeitsbeschaffungsmaßnahme\"\n"
+};
 const int numQuotes = sizeof(quotes)/sizeof(*quotes);
 int curQuote;
 
@@ -55,7 +57,7 @@ void drawFrame()
 			bufAdr[v+2]=(pcCos(i+128-cnt)+4096)/32;
 		}
 	}
-	gfxDrawText(GFX_TOP, GFX_LEFT, NULL, "ftPONY v0.1 omega\n", 240-fontDefault.height*1, 10);
+	gfxDrawText(GFX_TOP, GFX_LEFT, NULL, "ftPONY v0.1.1 ohmagah\n", 240-fontDefault.height*1, 10);
 	u32 ip = gethostid();
 	char bof[256];
 	sprintf(bof, "IP: %lu.%lu.%lu.%lu, port 5000, press B at any time to exit\n", ip & 0xFF, (ip>>8)&0xFF, (ip>>16)&0xFF, (ip>>24)&0xFF);
