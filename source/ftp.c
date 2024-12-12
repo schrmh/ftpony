@@ -15,12 +15,14 @@
 
 #define SOC_ALIGN       0x1000
 #define SOC_BUFFERSIZE  0x100000
+#define ARCHIVE_SDMC    0x00000009 ///< SDMC archive.
+//FS_Path fsMakePath(FS_PathType type, const void* path);
 
 static u32 *SOC_buffer = NULL;
 
 void failExit(const char *fmt, ...);
 
-FS_Archive sdmcArchive;
+FS_Archive archive = 0;
 
 char tmpBuffer[512];
 const int commandPort=5000;
@@ -35,11 +37,10 @@ void ftp_init()
 	Result ret;
 	ret=fsInit();
 	print("fsInit %08X\n", (unsigned int)ret);
-
-	sdmcArchive=(FS_Archive){0x00000009, (FS_Path){PATH_EMPTY, 1, (u8*)""}};
-	FSUSER_OpenArchive(NULL, &sdmcArchive);
+	
+	FSUSER_OpenArchive(&archive, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""));
 	print("FSUSER_OpenArchive %08X\n", (unsigned int)ret);
-
+	
 	// allocate buffer for SOC service
 	SOC_buffer = (u32*)memalign(SOC_ALIGN, SOC_BUFFERSIZE);
 
