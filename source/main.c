@@ -107,7 +107,7 @@ int main()
 		gspWaitForEvent(GSPEVENT_VBlank0, false);
 	}
 
-	ftp_exit();
+	socShutdown();
 	gfxExit();
 	hidExit();
 	aptExit();

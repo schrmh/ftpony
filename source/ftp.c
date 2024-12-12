@@ -13,7 +13,7 @@
 #include "ftp.h"
 #include "ftp_cmd.h"
 
-FS_archive sdmcArchive;
+FS_Archive sdmcArchive;
 
 char tmpBuffer[512];
 const int commandPort=5000;
@@ -29,7 +29,7 @@ void ftp_init()
 	ret=fsInit();
 	print("fsInit %08X\n", (unsigned int)ret);
 
-	sdmcArchive=(FS_archive){0x00000009, (FS_path){PATH_EMPTY, 1, (u8*)""}};
+	sdmcArchive=(FS_Archive){0x00000009, (FS_Path){PATH_EMPTY, 1, (u8*)""}};
 	FSUSER_OpenArchive(NULL, &sdmcArchive);
 	print("FSUSER_OpenArchive %08X\n", (unsigned int)ret);
 
@@ -43,9 +43,9 @@ void ftp_init()
 	listenfd=-1;
 }
 
-void ftp_exit()
+void socShutdown()
 {
-	SOC_Shutdown();
+	socExit();
 }
 
 int ftp_openCommandChannel()
