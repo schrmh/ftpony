@@ -8,6 +8,10 @@
 #include <arpa/inet.h>
 #include <3ds.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 #include "output.h"
 #include "ftp.h"
@@ -19,10 +23,34 @@
 //FS_Path fsMakePath(FS_PathType type, const void* path);
 
 static u32 *SOC_buffer = NULL;
+s32 sock = -1, csock = -1;
 
-void failExit(const char *fmt, ...);
+//---------------------------------------------------------------------------------
+void failExit(const char *fmt, ...) {
+//---------------------------------------------------------------------------------
 
-FS_Archive archive = 0;
+	if(sock>0) close(sock);
+	if(csock>0) close(csock);
+
+	va_list ap;
+
+	printf(CONSOLE_RED);
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
+	printf(CONSOLE_RESET);
+	printf("\nPress B to exit\n");
+
+	while (aptMainLoop()) {
+		gspWaitForVBlank();
+		hidScanInput();
+
+		u32 kDown = hidKeysDown();
+		if (kDown & KEY_B) exit(0);
+	}
+}
+
+FS_Archive sdmcArchive = 0;
 
 char tmpBuffer[512];
 const int commandPort=5000;
@@ -38,7 +66,7 @@ void ftp_init()
 	ret=fsInit();
 	print("fsInit %08X\n", (unsigned int)ret);
 	
-	FSUSER_OpenArchive(&archive, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""));
+	FSUSER_OpenArchive(&sdmcArchive, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""));
 	print("FSUSER_OpenArchive %08X\n", (unsigned int)ret);
 	
 	// allocate buffer for SOC service
